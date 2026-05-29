@@ -1,5 +1,478 @@
-{
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" }
-  ]
-}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>PenPS • Growtopia Private Server</title>
+    <meta name="description" content="PenPS - Growtopia Private Server dengan medium economy, daily giveaway, dan komunitas ramah.">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { background: #020617; }
+        html { scroll-behavior: smooth; }
+        
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(59,130,246,0.2);
+            border-radius: 1.5rem;
+            transition: all 0.3s;
+        }
+        .glass-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-4px);
+        }
+        .btn-primary {
+            background: linear-gradient(95deg, #3b82f6, #8b5cf6);
+            box-shadow: 0 0 12px rgba(59,130,246,0.4);
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(139,92,246,0.5);
+        }
+        .loader {
+            position: fixed;
+            inset: 0;
+            background: #020617;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: opacity 0.6s;
+        }
+        .loader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .step-number {
+            display: inline-flex;
+            width: 1.75rem;
+            height: 1.75rem;
+            background: #3b82f6;
+            border-radius: 9999px;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        .fade-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(15px);
+            z-index: 10002;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .lightbox.active { display: flex; }
+        .lightbox img { max-width: 85vw; max-height: 85vh; border-radius: 1rem; }
+        
+        .profit-gallery {
+            display: grid;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .profit-gallery.cols-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .profit-gallery img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        .profit-gallery img:hover {
+            transform: scale(1.02);
+        }
+        .profit-gallery.single img {
+            height: 260px;
+            object-fit: contain;
+        }
+        .dungeon-story {
+            background: rgba(0,0,0,0.4);
+            border-left: 4px solid #8b5cf6;
+            padding: 1rem;
+            border-radius: 1rem;
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+        .float-logo {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body class="text-gray-200">
+
+    <!-- Loader -->
+    <div id="loader" class="loader">
+        <img src="https://i.ibb.co.com/nsyNrXLN/IMG-20260529-WA0058.jpg" alt="PenPS Logo" class="w-20 h-20 rounded-full object-cover border-2 border-blue-400/50 mb-4 animate-pulse">
+        <div class="mt-2 text-xl font-semibold text-white">PenPS</div>
+        <div class="w-40 h-1 bg-slate-700 rounded-full mt-4 overflow-hidden">
+            <div id="progressBar" class="h-full w-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full transition-all duration-300"></div>
+        </div>
+        <p class="text-xs text-slate-400 mt-3">Memuat...</p>
+    </div>
+
+    <!-- Background -->
+    <div class="fixed inset-0 -z-10">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#1e1b4b,_#020617)]"></div>
+        <div class="absolute top-20 left-1/3 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-20 right-1/3 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox">
+        <img id="lightboxImg" src="" alt="Preview">
+    </div>
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 w-full z-30 py-3 px-5 md:px-10 flex justify-between items-center backdrop-blur-md bg-black/40 border-b border-white/10">
+        <div class="flex items-center gap-2">
+            <img src="https://i.ibb.co.com/nsyNrXLN/IMG-20260529-WA0058.jpg" alt="Logo" class="w-8 h-8 rounded-full object-cover border border-blue-400/50">
+            <span class="font-extrabold text-xl tracking-tight">PENPS</span>
+        </div>
+        <div class="hidden md:flex gap-7 text-sm font-medium">
+            <a href="#home" class="hover:text-blue-300">Beranda</a>
+            <a href="#download" class="hover:text-blue-300">Download</a>
+            <a href="#tutorial" class="hover:text-blue-300">Tutorial</a>
+            <a href="#virtualhost" class="hover:text-blue-300">Virtual Host</a>
+            <a href="#profit" class="hover:text-blue-300">Profit</a>
+            <a href="#community" class="hover:text-blue-300">Komunitas</a>
+        </div>
+        <button id="menuBtn" class="md:hidden text-2xl"><i class="fas fa-bars"></i></button>
+    </nav>
+    <div id="mobileMenu" class="fixed top-14 left-0 w-full bg-black/80 backdrop-blur-lg py-4 px-6 flex flex-col gap-2 z-20 transform -translate-y-full transition-transform duration-300 md:hidden border-b border-white/10">
+        <a href="#home">Beranda</a>
+        <a href="#download">Download</a>
+        <a href="#tutorial">Tutorial</a>
+        <a href="#virtualhost">Virtual Host</a>
+        <a href="#profit">Profit</a>
+        <a href="#community">Komunitas</a>
+    </div>
+
+    <main class="max-w-6xl mx-auto px-5 pt-24 pb-16">
+        <!-- Hero -->
+        <section id="home" class="fade-up text-center mb-16">
+            <div class="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/30 rounded-full px-4 py-1.5 text-sm mb-5">
+                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> Server Online 24/7
+            </div>
+            <div class="flex justify-center mb-6">
+                <img src="https://i.ibb.co.com/nsyNrXLN/IMG-20260529-WA0058.jpg" alt="PenPS Logo" class="w-36 h-36 md:w-44 md:h-44 rounded-full object-cover border-4 border-blue-500/60 shadow-2xl float-logo">
+            </div>
+            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight">
+                <span class="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">PenPS</span>
+                <br>Private Server
+            </h1>
+            <p class="text-gray-300 text-lg mt-4 max-w-2xl mx-auto">Medium Economy • Daily Giveaway • Player & Mods Friendly</p>
+            <div class="flex flex-wrap justify-center gap-4 mt-8">
+                <a href="#download" class="btn-primary px-8 py-3 rounded-full font-semibold inline-flex items-center gap-2"><i class="fas fa-download"></i> Mulai Main</a>
+                <button id="copyHostBtn" class="bg-slate-800 hover:bg-slate-700 px-8 py-3 rounded-full font-semibold border border-slate-700 inline-flex items-center gap-2"><i class="fas fa-copy"></i> Salin Host Link</button>
+            </div>
+        </section>
+
+        <!-- Stat Cards -->
+        <div class="fade-up grid grid-cols-1 sm:grid-cols-3 gap-5 mb-20">
+            <div class="glass-card p-5 flex items-center gap-4"><div class="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center"><i class="fas fa-circle text-green-400 text-xl"></i></div><div><p class="text-xs text-gray-400">STATUS</p><p class="text-2xl font-bold text-green-300">ONLINE</p></div></div>
+            <div class="glass-card p-5 flex items-center gap-4"><div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center"><i class="fas fa-users text-blue-300 text-xl"></i></div><div><p class="text-xs text-gray-400">PLAYER</p><p class="text-3xl font-bold" id="playerCount">28</p></div></div>
+            <div class="glass-card p-5 flex items-center gap-4"><div class="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><i class="fas fa-chart-line text-purple-300 text-xl"></i></div><div><p class="text-xs text-gray-400">EKONOMI</p><p class="text-xl font-semibold">Medium</p></div></div>
+        </div>
+
+        <!-- Fitur Unggulan -->
+        <div class="fade-up grid grid-cols-1 md:grid-cols-4 gap-5 mb-20">
+            <div class="bg-slate-900/40 rounded-2xl p-5 text-center border border-slate-800"><i class="fas fa-gift text-pink-400 text-3xl mb-2"></i><h3 class="font-bold">Daily Giveaway</h3><p class="text-sm text-gray-400">Gacha & custom item tiap malam</p></div>
+            <div class="bg-slate-900/40 rounded-2xl p-5 text-center border border-slate-800"><i class="fas fa-coins text-yellow-400 text-3xl mb-2"></i><h3 class="font-bold">Medium Economy</h3><p class="text-sm text-gray-400">WL mudah, tanpa donasi unlimited</p></div>
+            <div class="bg-slate-900/40 rounded-2xl p-5 text-center border border-slate-800"><i class="fas fa-hand-peace text-green-400 text-3xl mb-2"></i><h3 class="font-bold">Player Friendly</h3><p class="text-sm text-gray-400">Komunitas ramah & aktif</p></div>
+            <div class="bg-slate-900/40 rounded-2xl p-5 text-center border border-slate-800"><i class="fas fa-user-shield text-indigo-400 text-3xl mb-2"></i><h3 class="font-bold">Mods Supportif</h3><p class="text-sm text-gray-400">Siap membantu kendala</p></div>
+        </div>
+
+        <!-- Download Section -->
+        <section id="download" class="fade-up scroll-mt-20 mb-20">
+            <h2 class="text-3xl font-bold mb-8 flex items-center gap-3"><i class="fas fa-download text-blue-400"></i> Download & Konfigurasi</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Android -->
+                <div class="glass-card p-6"><i class="fab fa-android text-4xl text-green-400 mb-3"></i><h3 class="text-xl font-bold mb-3">Android</h3><div class="space-y-3"><a href="#" onclick="alert('APK tersedia di grup Discord/WhatsApp. Hubungi admin.')" class="block bg-blue-600/70 hover:bg-blue-600 text-center py-2 rounded-lg"><i class="fas fa-gamepad mr-2"></i> Download APK</a><div class="bg-slate-800/60 rounded-lg p-3"><p class="text-xs mb-1">PowerTunnel Config:</p><code class="text-blue-300 text-sm break-all">https://dash.gtps.cloud/android/1856</code><button data-copy="https://dash.gtps.cloud/android/1856" class="copy-link-btn mt-2 w-full bg-slate-700 hover:bg-slate-600 py-1.5 rounded text-sm"><i class="far fa-copy mr-1"></i> Salin Link</button></div></div></div>
+                <!-- iOS -->
+                <div class="glass-card p-6"><i class="fab fa-apple text-4xl text-gray-300 mb-3"></i><h3 class="text-xl font-bold mb-3">iOS</h3><div class="bg-slate-800/60 rounded-lg p-3"><p class="text-xs mb-1">Konfigurasi (Surge/Shadowrocket):</p><code class="text-blue-300 text-xs break-all">[Host]<br>growtopia1.com = 91.134.85.13<br>growtopia2.com = 91.134.85.13<br>www.growtopia1.com = 91.134.85.13<br>www.growtopia2.com = 91.134.85.13</code><button id="copyIosConfig" class="mt-3 w-full bg-slate-700 hover:bg-slate-600 py-1.5 rounded text-sm"><i class="far fa-copy mr-1"></i> Salin Konfigurasi</button></div></div>
+                <!-- Windows -->
+                <div class="glass-card p-6"><i class="fab fa-windows text-4xl text-blue-300 mb-3"></i><h3 class="text-xl font-bold mb-3">Windows</h3><div class="bg-slate-800/60 rounded-lg p-3"><p class="text-xs mb-1">Hosts file entries:</p><code class="text-blue-300 text-xs">91.134.85.13 growtopia1.com<br>91.134.85.13 growtopia2.com<br>91.134.85.13 www.growtopia1.com<br>91.134.85.13 www.growtopia2.com</code><button id="copyWinHosts" class="mt-3 w-full bg-slate-700 hover:bg-slate-600 py-1.5 rounded text-sm"><i class="far fa-copy mr-1"></i> Salin Hosts</button></div><p class="text-xs text-gray-400 mt-3">Edit: C:\Windows\System32\drivers\etc\hosts (Admin)</p></div>
+            </div>
+        </section>
+
+        <!-- VIRTUAL HOST SECTION (download via API auto) -->
+        <section id="virtualhost" class="fade-up scroll-mt-20 mb-20">
+            <h2 class="text-3xl font-bold mb-6 flex items-center gap-3"><i class="fas fa-server text-blue-400"></i> Virtual Host (Panduan Lengkap)</h2>
+            <div class="glass-card p-6 md:p-8">
+                <div class="flex flex-col md:flex-row gap-8">
+                    <div class="w-full md:w-5/12 space-y-5">
+                        <div>
+                            <span class="text-sm uppercase tracking-wider text-blue-300">File Host (Download Otomatis)</span>
+                            <div class="mt-2 flex flex-wrap gap-3">
+                                <!-- Tombol download via API -->
+                                <button id="downloadHostFile" class="bg-blue-700 hover:bg-blue-600 px-5 py-2.5 rounded-lg text-sm font-medium inline-flex items-center gap-2"><i class="fas fa-download"></i> Download Host .txt</button>
+                                <button id="copyVhostLinkBtn" class="bg-slate-700 hover:bg-slate-600 px-5 py-2.5 rounded-lg text-sm inline-flex items-center gap-2"><i class="far fa-copy"></i> Salin Link File</button>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-2">File diambil langsung dari server (auto download).</p>
+                        </div>
+                        <div>
+                            <span class="text-sm uppercase tracking-wider text-blue-300">Aplikasi Virtual Host</span>
+                            <div class="mt-2">
+                                <a href="https://sfile.mobi/4xXabY4QEEP" target="_blank" class="bg-emerald-700/80 hover:bg-emerald-600 px-5 py-2.5 rounded-lg text-sm inline-flex items-center gap-2"><i class="fas fa-mobile-alt"></i> Download Virtual Host App</a>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-sm uppercase tracking-wider text-blue-300">Video Tutorial</span>
+                            <div class="mt-2">
+                                <a href="#" onclick="alert('Video tutorial akan segera hadir di channel YouTube PenPS')" class="bg-indigo-700/70 hover:bg-indigo-600 px-5 py-2.5 rounded-lg text-sm inline-flex items-center gap-2"><i class="fas fa-video"></i> Tonton Video Panduan</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-7/12">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center gap-2"><i class="fas fa-list-ol text-blue-300"></i> Langkah-langkah</h3>
+                        <ul class="space-y-4 text-sm text-gray-200">
+                            <li class="flex gap-3"><span class="step-number">1</span><div><strong class="text-white">Download File Host</strong><br><span class="text-gray-400">Klik tombol "Download Host .txt" di samping. File akan otomatis terunduh.</span></div></li>
+                            <li class="flex gap-3"><span class="step-number">2</span><div><strong class="text-white">Buka Aplikasi Virtual Host</strong><br><span class="text-gray-400">Install dan buka aplikasi Virtual Host yang sudah diunduh (HostGo / Virtual Host App).</span></div></li>
+                            <li class="flex gap-3"><span class="step-number">3</span><div><strong class="text-white">Pilih File Host</strong><br><span class="text-gray-400">Tekan tombol "re-select file" atau pilih file, lalu cari file <strong>PenPS-Hosts.txt</strong> yang baru diunduh.</span></div></li>
+                            <li class="flex gap-3"><span class="step-number">4</span><div><strong class="text-white">Aktifkan Host</strong><br><span class="text-gray-400">Tekan tombol START/ikon power untuk mengaktifkan virtual host.</span></div></li>
+                            <li class="flex gap-3"><span class="step-number">5</span><div><strong class="text-white">Mainkan Growtopia</strong><br><span class="text-gray-400">Buka game Growtopia dan login. Selamat bermain di PenPS!</span></div></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tutorial Alternatif -->
+        <section id="tutorial" class="fade-up scroll-mt-20 mb-20">
+            <h2 class="text-3xl font-bold mb-6 flex items-center gap-3"><i class="fas fa-graduation-cap text-blue-400"></i> Tutorial Alternatif</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass-card p-5"><div class="text-3xl mb-2">📱</div><h3 class="text-lg font-bold">Android (PowerTunnel)</h3><div class="mt-3 space-y-2 text-sm"><div><span class="step-number">1</span>Install PowerTunnel</div><div><span class="step-number">2</span>Copy config link</div><div><span class="step-number">3</span>Import & Start VPN</div><div><span class="step-number">4</span>Buka Growtopia</div></div></div>
+                <div class="glass-card p-5"><div class="text-3xl mb-2">💻</div><h3 class="text-lg font-bold">Windows (Hosts)</h3><div class="mt-3 space-y-2 text-sm"><div><span class="step-number">1</span>Buka Notepad (Admin)</div><div><span class="step-number">2</span>Edit hosts file</div><div><span class="step-number">3</span>Tempel 4 baris IP</div><div><span class="step-number">4</span>Simpan & main</div></div></div>
+                <div class="glass-card p-5"><div class="text-3xl mb-2">🍎</div><h3 class="text-lg font-bold">iOS (Surge)</h3><div class="mt-3 space-y-2 text-sm"><div><span class="step-number">1</span>Salin konfigurasi</div><div><span class="step-number">2</span>Import ke Surge/Shadowrocket</div><div><span class="step-number">3</span>Aktifkan & buka game</div></div></div>
+            </div>
+        </section>
+
+        <!-- PROFIT METHODS -->
+        <section id="profit" class="fade-up scroll-mt-20 mb-20">
+            <h2 class="text-3xl font-bold mb-4 flex items-center gap-3"><i class="fas fa-coins text-yellow-400"></i> Metode Profit di PenPS</h2>
+            <p class="text-gray-300 mb-8">Pelajari cara menghasilkan World Lock (WL) dan Diamond Lock (DL) dengan metode terbaik di server. <span class="text-yellow-300">*Klik gambar untuk memperbesar</span></p>
+            <div id="profitContainer" class="grid md:grid-cols-2 gap-8"></div>
+        </section>
+
+        <!-- Community -->
+        <section id="community" class="fade-up scroll-mt-20 text-center">
+            <h2 class="text-3xl font-bold mb-6"><i class="fab fa-discord text-indigo-400 mr-3"></i> Komunitas</h2>
+            <div class="flex flex-wrap justify-center gap-5">
+                <a href="#" onclick="alert('Discord: https://discord.gg/penps (official)')" class="glass-card px-8 py-4 flex items-center gap-3 hover:scale-105 transition"><i class="fab fa-discord text-3xl text-indigo-300"></i><span class="font-semibold">Discord Server</span></a>
+                <a href="#" onclick="alert('Hubungi admin untuk link WhatsApp group')" class="glass-card px-8 py-4 flex items-center gap-3 hover:scale-105 transition"><i class="fab fa-whatsapp text-3xl text-green-400"></i><span class="font-semibold">WhatsApp Group</span></a>
+            </div>
+        </section>
+
+        <footer class="text-center text-gray-500 text-sm border-t border-slate-800 pt-8 mt-16">
+            <p>© 2025 PenPS Private Server • Medium Economy • Fairplay • No Donation Unlimited</p>
+        </footer>
+    </main>
+
+    <script>
+        (function() {
+            // Loader
+            let prog = 0;
+            const bar = document.getElementById('progressBar');
+            const loaderDiv = document.getElementById('loader');
+            const interval = setInterval(() => {
+                prog += Math.random() * 20 + 5;
+                if (prog >= 100) {
+                    clearInterval(interval);
+                    bar.style.width = '100%';
+                    setTimeout(() => {
+                        loaderDiv.classList.add('fade-out');
+                        setTimeout(() => loaderDiv.style.display = 'none', 500);
+                    }, 300);
+                } else bar.style.width = prog + '%';
+            }, 200);
+
+            // Mobile menu
+            const menuBtn = document.getElementById('menuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            if(menuBtn) menuBtn.onclick = () => mobileMenu.classList.toggle('-translate-y-full');
+            document.querySelectorAll('#mobileMenu a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.add('-translate-y-full')));
+
+            // Player count simulation
+            const playerSpan = document.getElementById('playerCount');
+            let currPlayers = 28;
+            function updatePlayerCount() {
+                const newVal = Math.floor(Math.random() * 40) + 12;
+                let start = currPlayers, end = newVal, startTime = null;
+                function animate(now) {
+                    if (!startTime) startTime = now;
+                    let t = Math.min(1, (now - startTime) / 800);
+                    playerSpan.innerText = Math.floor(start + (end - start) * t);
+                    if (t < 1) requestAnimationFrame(animate);
+                }
+                requestAnimationFrame(animate);
+                currPlayers = newVal;
+            }
+            setInterval(updatePlayerCount, 7000);
+
+            // Copy helper
+            function copyText(text, msg = '✅ Disalin!') {
+                navigator.clipboard.writeText(text).then(() => {
+                    let toast = document.createElement('div');
+                    toast.className = 'fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-5 py-2 rounded-full text-sm z-50 shadow-lg border border-slate-600';
+                    toast.innerText = msg;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 1800);
+                }).catch(() => alert('Gagal menyalin'));
+            }
+            document.querySelectorAll('.copy-link-btn').forEach(btn => {
+                btn.addEventListener('click', () => copyText(btn.getAttribute('data-copy'), 'Link config disalin'));
+            });
+            document.getElementById('copyHostBtn')?.addEventListener('click', () => copyText('https://dash.gtps.cloud/android/1856', 'Link PowerTunnel disalin'));
+            document.getElementById('copyIosConfig')?.addEventListener('click', () => {
+                let iosCfg = `[Host]\ngrowtopia1.com = 91.134.85.13\ngrowtopia2.com = 91.134.85.13\nwww.growtopia1.com = 91.134.85.13\nwww.growtopia2.com = 91.134.85.13`;
+                copyText(iosCfg, 'Konfigurasi iOS disalin');
+            });
+            document.getElementById('copyWinHosts')?.addEventListener('click', () => {
+                let winHosts = `91.134.85.13 growtopia1.com\n91.134.85.13 growtopia2.com\n91.134.85.13 www.growtopia1.com\n91.134.85.13 www.growtopia2.com`;
+                copyText(winHosts, 'Hosts Windows disalin');
+            });
+
+            // ========== VIRTUAL HOST AUTO DOWNLOAD VIA API ==========
+            // Tombol download mengarah ke endpoint /api/download
+            document.getElementById('downloadHostFile')?.addEventListener('click', () => {
+                window.location.href = '/api/download';
+            });
+            // Tombol salin link API
+            document.getElementById('copyVhostLinkBtn')?.addEventListener('click', () => {
+                const apiUrl = window.location.origin + '/api/download';
+                copyText(apiUrl, 'Link API download disalin! File akan langsung terunduh.');
+            });
+
+            // ========== PROFIT METHODS ==========
+            const profitMethods = [
+                {
+                    name: 'BFG (Break For Gems)',
+                    icon: '💎',
+                    description: 'BFG adalah metode farming di Growtopia dimana pemain menghancurkan (break) block untuk mendapatkan gems dengan cepat.',
+                    images: ['https://i.ibb.co.com/Wp7RVPht/Screenshot-2026-05-10-150240.png'],
+                    galleryClass: 'profit-gallery single',
+                    contentHTML: `
+                        <div class="mt-3 text-sm text-gray-200 space-y-2">
+                            <h4 class="font-semibold text-blue-300">Cara Kerja:</h4>
+                            <ol class="list-decimal list-inside text-xs text-gray-400 space-y-1">
+                                <li>Host menyediakan world berisi banyak block untuk dihancurkan.</li>
+                                <li>Pemain masuk ke world dan menghancurkan block tersebut.</li>
+                                <li>Dari block yang dihancurkan, pemain mendapatkan gems.</li>
+                                <li>Gems dapat digunakan untuk membeli item, pack, atau kebutuhan lainnya.</li>
+                            </ol>
+                            <h4 class="font-semibold text-blue-300 mt-2">Fungsi BFG:</h4>
+                            <ul class="list-disc list-inside text-xs text-gray-400">
+                                <li>Farming gems lebih cepat</li>
+                                <li>Membantu pemain mendapatkan banyak gems</li>
+                                <li>Digunakan untuk leveling dan kebutuhan item</li>
+                            </ul>
+                        </div>
+                    `
+                },
+                {
+                    name: 'Dungeon',
+                    icon: '🏰',
+                    description: 'Dungeon adalah mode atau area khusus yang berisi monster, tantangan, dan hadiah. Kalahkan boss untuk loot langka!',
+                    images: [
+                        'https://i.ibb.co.com/4nt7fWNp/Screenshot-2026-05-29-154612.png',
+                        'https://i.ibb.co.com/vxyFGLB9/Screenshot-2026-05-29-145638.png',
+                        'https://i.ibb.co.com/VhbZ5zr/Screenshot-2026-05-29-150130.png',
+                        'https://i.ibb.co.com/q3QR1v8z/Screenshot-2026-05-29-145905.png'
+                    ],
+                    galleryClass: 'profit-gallery cols-2',
+                    contentHTML: `
+                        <div class="mt-3 text-sm text-gray-200 space-y-3">
+                            <div class="dungeon-story">
+                                <i class="fas fa-scroll text-purple-300 mr-2"></i>
+                                <span class="text-purple-200 font-medium">A message from the Wizard's Council.</span><br>
+                                The Legendary Wizard discovered the secrets to these magic scrolls millennia ago but one of his acolyte's recently shared it on Wizi-Leaks and so the Wizard's Council decided it was best to make the information fully available to avoid disastrous misuse.
+                                <br><br>
+                                The scrolls create a portal to the Chaotic Dimension overseen by The Legendary Wizard's oldest "friend"... The Lich. The scrolls themselves seem to regenerate no matter what we've tried to do to get rid of them — they just keep coming back.
+                                <br><br>
+                                The Chaos Dimension is constantly in flux and will change with every new entry. Each time you cross through the portal you will have none of the skill or items you collected in your past visits. The Lich has overseen this Chaos Dimension for longer than anyone can remember, studying all of its darkest secrets. If you come across them while in a dungeon, they may be able to help you in your quest.
+                            </div>
+                            <p class="text-xs text-gray-400">Di dalam dungeon, pemain harus mengalahkan monster, menyelesaikan rintangan, dan bertahan hidup. Gunakan gear bagus, consumable, dan strategi tim.</p>
+                        </div>
+                    `
+                }
+            ];
+
+            const profitContainer = document.getElementById('profitContainer');
+            function renderProfitMethods() {
+                profitContainer.innerHTML = profitMethods.map(method => {
+                    return `
+                    <div class="glass-card p-6 flex flex-col">
+                        <div class="${method.galleryClass}">
+                            ${method.images.map(img => `<img src="${img}" alt="${method.name}" loading="lazy">`).join('')}
+                        </div>
+                        <h3 class="text-xl font-bold mb-2 text-white flex items-center gap-2">
+                            <span>${method.icon}</span> ${method.name}
+                        </h3>
+                        <p class="text-gray-300 text-sm mb-2">${method.description}</p>
+                        ${method.contentHTML}
+                    </div>
+                    `;
+                }).join('');
+                
+                // Lightbox untuk semua gambar profit
+                document.querySelectorAll('#profitContainer .profit-gallery img').forEach(img => {
+                    img.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        lightboxImg.src = this.src;
+                        lightbox.classList.add('active');
+                    });
+                });
+            }
+            renderProfitMethods();
+
+            // Lightbox global
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            lightbox.addEventListener('click', () => lightbox.classList.remove('active'));
+
+            // Fade-up observer
+            const faders = document.querySelectorAll('.fade-up');
+            const obs = new IntersectionObserver((entries) => {
+                entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+            }, { threshold: 0.1 });
+            faders.forEach(el => obs.observe(el));
+
+            // Anti-inspect sederhana
+            document.addEventListener('contextmenu', (e) => e.preventDefault());
+            document.addEventListener('keydown', (e) => {
+                if (e.keyCode === 123) e.preventDefault();
+                if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) e.preventDefault();
+                if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83)) e.preventDefault();
+            });
+        })();
+    </script>
+</body>
+</html>
