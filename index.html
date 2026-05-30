@@ -94,8 +94,10 @@
         }
         .profit-gallery img {
             width: 100%;
-            height: 180px;
-            object-fit: cover;
+            height: auto;
+            max-height: 200px;
+            object-fit: contain;
+            background-color: #0f172a;
             border-radius: 12px;
             border: 1px solid #334155;
             transition: transform 0.3s;
@@ -105,8 +107,10 @@
             transform: scale(1.02);
         }
         .profit-gallery.single img {
-            height: 260px;
+            height: auto;
+            max-height: 280px;
             object-fit: contain;
+            background-color: #0f172a;
         }
         .dungeon-story {
             background: rgba(0,0,0,0.4);
@@ -123,6 +127,29 @@
             0% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
             100% { transform: translateY(0px); }
+        }
+        .gem-price-table {
+            background: rgba(0,0,0,0.3);
+            border-radius: 1rem;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+        }
+        .gem-price-table h5 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #facc15;
+        }
+        .gem-price-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 0.25rem 0.5rem;
+            font-size: 0.7rem;
+        }
+        .shop-item {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #334155;
+            padding: 0.3rem 0;
         }
     </style>
 </head>
@@ -274,7 +301,7 @@
             </div>
         </section>
 
-        <!-- PROFIT METHODS -->
+        <!-- PROFIT METHODS (BFG, GROWMINES, DUNGEON) -->
         <section id="profit" class="fade-up scroll-mt-20 mb-20">
             <h2 class="text-3xl font-bold mb-4 flex items-center gap-3"><i class="fas fa-coins text-yellow-400"></i> Metode Profit di PenPS</h2>
             <p class="text-gray-300 mb-8">Pelajari cara menghasilkan World Lock (WL) dan Diamond Lock (DL) dengan metode terbaik di server. <span class="text-yellow-300">*Klik gambar untuk memperbesar</span></p>
@@ -368,7 +395,17 @@
                 copyText(apiUrl, 'Link API download disalin! File akan langsung terunduh.');
             });
 
-            // Profit Methods
+            // --- 6 gambar Growmines dari URL catbox.moe ---
+            const growmineImages = [
+                'https://files.catbox.moe/ce6ee3.png',
+                'https://files.catbox.moe/gatret.png',
+                'https://files.catbox.moe/h10d72.png',
+                'https://files.catbox.moe/q20rwl.png',
+                'https://files.catbox.moe/q1sbgb.png',
+                'https://files.catbox.moe/nurl3y.png'
+            ];
+
+            // Definisi metode profit (BFG, Growmines, Dungeon)
             const profitMethods = [
                 {
                     name: 'BFG (Break For Gems)',
@@ -391,6 +428,52 @@
                                 <li>Membantu pemain mendapatkan banyak gems</li>
                                 <li>Digunakan untuk leveling dan kebutuhan item</li>
                             </ul>
+                        </div>
+                    `
+                },
+                {
+                    name: 'Growmines (Sistem Tambang)',
+                    icon: '⛏️',
+                    description: 'Sistem mining eksklusif PenPS: masuk ke dunia tambang, kumpulkan bijih & gemstones, upgrade pickaxe, dan tukarkan Mining Coins dengan item langka!',
+                    images: growmineImages,  // 6 gambar dari catbox
+                    galleryClass: 'profit-gallery cols-2',
+                    contentHTML: `
+                        <div class="mt-3 text-sm text-gray-200 space-y-3">
+                            <div class="bg-amber-950/30 p-3 rounded-lg border border-amber-500/30">
+                                <i class="fas fa-hard-hat text-amber-400 mr-2"></i>
+                                <span class="font-semibold text-amber-300">Cara Memulai:</span> Beli <strong>Crappy Pickaxe</strong> di Pickaxe Station (300 Gems) untuk bisa masuk tambang. Upgrade pickaxe untuk mendapatkan hasil lebih baik!
+                            </div>
+                            
+                            <h4 class="font-semibold text-emerald-300 mt-2">🪙 Mining Coins</h4>
+                            <p class="text-xs">Dapatkan Mining Coins dengan menemukan <strong>exit</strong> di dunia tambang dan memiliki setidaknya <strong>5 item unik</strong> yang ditambang. Koin ini bisa ditukar di <strong>Mine Shop</strong>.</p>
+                            <div class="gem-price-table">
+                                <h5><i class="fas fa-store"></i> Mine Shop - Penukaran Mining Coins</h5>
+                                <div class="shop-item"><span>Mythical Rayman's Fist</span><span class="text-yellow-300">2500 Coins</span></div>
+                                <div class="shop-item"><span>Legendary Infinity Rayman's Fist</span><span class="text-yellow-300">750 Coins</span></div>
+                                <div class="shop-item"><span>Greedy Pickaxe</span><span class="text-yellow-300">2500 Coins</span></div>
+                                <div class="shop-item"><span>Void Halo</span><span class="text-yellow-300">375 Coins</span></div>
+                                <div class="shop-item"><span>Galaxy Skin</span><span class="text-yellow-300">375 Coins</span></div>
+                            </div>
+                            
+                            <h4 class="font-semibold text-emerald-300 mt-2">💎 Gem Station - Jual Gemstones</h4>
+                            <p class="text-xs">Hasil tambang berupa gemstones (Diamond, Ruby, Sapphire, Emerald, Topaz) dapat dijual ke Gem Station dengan harga berikut:</p>
+                            <div class="gem-price-grid">
+                                <div><strong>Diamond</strong><br>Huge: 90k Gems<br>Large: 30k<br>Medium: 12k<br>Small: 6k<br>Tiny: 3k</div>
+                                <div><strong>Ruby</strong><br>Huge: 60k<br>Large: 20k<br>Medium: 8k<br>Small: 4k<br>Tiny: 2k</div>
+                                <div><strong>Sapphire</strong><br>Huge: 30k<br>Large: 10k<br>Medium: 4k<br>Small: 2k<br>Tiny: 1k</div>
+                                <div><strong>Emerald</strong><br>Huge: 15k<br>Large: 5k<br>Medium: 2k<br>Small: 1k<br>Tiny: 500</div>
+                                <div><strong>Topaz</strong><br>Huge: 9k<br>Large: 3k<br>Medium: 1.2k<br>Small: 600<br>Tiny: 300</div>
+                            </div>
+                            <p class="text-xs text-gray-400 italic mt-2">*Harga dalam Gems. Gunakan gems untuk membeli pickaxe awal atau keperluan lain.</p>
+                            
+                            <h4 class="font-semibold text-emerald-300 mt-2">⚙️ Tips Profit Maksimal:</h4>
+                            <ul class="list-disc list-inside text-xs text-gray-300">
+                                <li>Upgrade pickaxe untuk mendapatkan gemstone lebih besar & lebih sering</li>
+                                <li>Fokus mengumpulkan 5+ item unik sebelum exit untuk mendapat Mining Coins</li>
+                                <li>Kumpulkan gemstone langka (Diamond, Ruby) untuk dijual massal</li>
+                                <li>Ikuti event "Happy Hour" tambang untuk drop rate berlipat</li>
+                            </ul>
+                            <div class="text-xs text-gray-400 mt-2 italic">✨ <strong>6 gambar di atas</strong> menunjukkan tampilan antarmuka Growmines: Mine Shop, Pickaxe Station, Gem Station, dan daftar harga gemstones. (Klik untuk memperbesar)</div>
                         </div>
                     `
                 },
@@ -439,6 +522,7 @@
                     `;
                 }).join('');
                 
+                // Lightbox untuk semua gambar profit
                 document.querySelectorAll('#profitContainer .profit-gallery img').forEach(img => {
                     img.addEventListener('click', function(e) {
                         e.stopPropagation();
