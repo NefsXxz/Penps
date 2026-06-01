@@ -244,9 +244,9 @@
                 <!-- Android -->
                 <div class="glass-card p-6"><i class="fab fa-android text-4xl text-green-400 mb-3"></i><h3 class="text-xl font-bold mb-3">Android</h3><div class="space-y-3"><a href="https://www.mediafire.com/file/79tibm8x2mshpac/gtpscloud.apk/file" target="_blank" class="block bg-blue-600/70 hover:bg-blue-600 text-center py-2 rounded-lg"><i class="fas fa-gamepad mr-2"></i> Download APK</a><div class="bg-slate-800/60 rounded-lg p-3"><p class="text-xs mb-1">PowerTunnel Config:</p><code class="text-blue-300 text-sm break-all">https://dash.gtps.cloud/android/1856</code><button data-copy="https://dash.gtps.cloud/android/1856" class="copy-link-btn mt-2 w-full bg-slate-700 hover:bg-slate-600 py-1.5 rounded text-sm"><i class="far fa-copy mr-1"></i> Salin Link</button></div></div></div>
                 <!-- iOS -->
-                <div class="glass-card p-6"><i class="fab fa-apple text-4xl text-gray-300 mb-3"></i><h3 class="text-xl font-bold mb-3">iOS</h3><div class="bg-slate-800/60 rounded-lg p-3"><p class="text-xs mb-1">Konfigurasi (Surge/Shadowrocket):</p><code class="text-blue-300 text-xs break-all">[Host]<br>growtopia1.com = 91.134.85.13<br>growtopia2.com = 91.134.85.13<br>www.growtopia1.com = 91.134.85.13<br>www.growtopia2.com = 91.134.85.13</code><button id="copyIosConfig" class="mt-3 w-full bg-slate-700 hover:bg-slate-600 py-1.5 rounded text-sm"><i class="far fa-copy mr-1"></i> Salin Konfigurasi</button></div></div>
+                <div class="glass-card p-6"><i class="fab fa-apple text-4xl text-gray-300 mb-3"></i><h3 class="text-xl font-bold mb-3">iOS</h3><div class="bg-slate-800/60 rounded-lg p-3"><p class="text-xs mb-1">Konfigurasi (Surge/Shadowrocket):</p><code class="text-blue-300 text-xs break-all">[Host]<br>growtopia1.com = 5.39.13.30<br>growtopia2.com = 5.39.13.30<br>www.growtopia1.com = 5.39.13.30<br>www.growtopia2.com = 5.39.13.30</code><button id="copyIosConfig" class="mt-3 w-full bg-slate-700 hover:bg-slate-600 py-1.5 rounded text-sm"><i class="far fa-copy mr-1"></i> Salin Konfigurasi</button></div></div>
                 <!-- Windows -->
-                <div class="glass-card p-6"><i class="fab fa-windows text-4xl text-blue-300 mb-3"></i><h3 class="text-xl font-bold mb-3">Windows</h3><div class="bg-slate-800/60 rounded-lg p-3"><p class="text-xs mb-1">Hosts file entries:</p><code class="text-blue-300 text-xs">91.134.85.13 growtopia1.com<br>91.134.85.13 growtopia2.com<br>91.134.85.13 www.growtopia1.com<br>91.134.85.13 www.growtopia2.com</code><button id="copyWinHosts" class="mt-3 w-full bg-slate-700 hover:bg-slate-600 py-1.5 rounded text-sm"><i class="far fa-copy mr-1"></i> Salin Hosts</button></div><p class="text-xs text-gray-400 mt-3">Edit: C:\Windows\System32\drivers\etc\hosts (Admin)</p></div>
+                <div class="glass-card p-6"><i class="fab fa-windows text-4xl text-blue-300 mb-3"></i><h3 class="text-xl font-bold mb-3">Windows</h3><div class="bg-slate-800/60 rounded-lg p-3"><p class="text-xs mb-1">Hosts file entries:</p><code class="text-blue-300 text-xs">5.39.13.30 growtopia1.com<br>5.39.13.30 growtopia2.com<br>5.39.13.30 www.growtopia1.com<br>5.39.13.30 www.growtopia2.com</code><button id="copyWinHosts" class="mt-3 w-full bg-slate-700 hover:bg-slate-600 py-1.5 rounded text-sm"><i class="far fa-copy mr-1"></i> Salin Hosts</button></div><p class="text-xs text-gray-400 mt-3">Edit: C:\Windows\System32\drivers\etc\hosts (Admin)</p></div>
             </div>
         </section>
 
@@ -378,11 +378,11 @@
             });
             document.getElementById('copyHostBtn')?.addEventListener('click', () => copyText('https://dash.gtps.cloud/android/1856', 'Link PowerTunnel disalin'));
             document.getElementById('copyIosConfig')?.addEventListener('click', () => {
-                let iosCfg = `[Host]\ngrowtopia1.com = 91.134.85.13\ngrowtopia2.com = 91.134.85.13\nwww.growtopia1.com = 91.134.85.13\nwww.growtopia2.com = 91.134.85.13`;
+                let iosCfg = `[Host]\ngrowtopia1.com = 5.39.13.30\ngrowtopia2.com = 5.39.13.30\nwww.growtopia1.com = 5.39.13.30\nwww.growtopia2.com = 5.39.13.30`;
                 copyText(iosCfg, 'Konfigurasi iOS disalin');
             });
             document.getElementById('copyWinHosts')?.addEventListener('click', () => {
-                let winHosts = `91.134.85.13 growtopia1.com\n91.134.85.13 growtopia2.com\n91.134.85.13 www.growtopia1.com\n91.134.85.13 www.growtopia2.com`;
+                let winHosts = `5.39.13.30 growtopia1.com\n5.39.13.30 growtopia2.com\n5.39.13.30 www.growtopia1.com\n5.39.13.30 www.growtopia2.com`;
                 copyText(winHosts, 'Hosts Windows disalin');
             });
 
