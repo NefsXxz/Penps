@@ -376,9 +376,9 @@
             document.querySelectorAll('.copy-link-btn').forEach(btn => {
                 btn.addEventListener('click', () => copyText(btn.getAttribute('data-copy'), 'Link config disalin'));
             });
-            document.getElementById('copyHostBtn')?.addEventListener('click', () => copyText('https://dash.gtps.cloud/android/1856', 'Link PowerTunnel disalin'));
+            document.getElementById('copyHostBtn')?.addEventListener('click', () => copyText('https://gtpshost.com/raw/PenPS', 'Link PowerTunnel disalin'));
             document.getElementById('copyIosConfig')?.addEventListener('click', () => {
-                let iosCfg = `[Host]\ngrowtopia1.com = 5.39.13.30\ngrowtopia2.com = 5.39.13.30\nwww.growtopia1.com = 5.39.13.30\nwww.growtopia2.com = 5.39.13.30`;
+                let iosCfg = `https://dash.gtps.cloud/ios/1856`;
                 copyText(iosCfg, 'Konfigurasi iOS disalin');
             });
             document.getElementById('copyWinHosts')?.addEventListener('click', () => {
